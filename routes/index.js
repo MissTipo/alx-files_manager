@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/status', AppController.getStatus);
 router.get('/stats', AppController.getStats);
 router.post('/users', UsersController.postNew);
+//for task 3 fix this
 // router.get('/connect', AuthController.getConnect)
 // router.get('/disconnect', AuthController.getDisconnect)
 // router.get('/user/me', UsersController.getMe)
