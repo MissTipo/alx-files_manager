@@ -1,6 +1,3 @@
-// const { objectId } = require('mongodb');
-// const dbClient = require('../utils/db');
-// const redisClient = require('../utils/redis')
 const crypto = require('crypto');
 const dbClient = require('../utils/db');
 
@@ -39,24 +36,3 @@ const UsersController = {
 };
 
 module.exports = UsersController;
-
-
-//   async postNew(req, res) {
-//     const email = req.body.email;
-//     if (!email) {
-//       return res.status(400).json({ error: 'Missing email' });
-//     }
-//     const password = req.body.password
-//     if (!password) {
-//       return res.status(400).json({ error: 'Missing password' })
-//     }
-//     const existingEmail = await dbClient.usersCollection('users').findOne({ email: email });
-//     if (existingEmail) {
-//       return res.status(400).json({ error: 'Already exist' });
-//     }
-//     const hashedPassword = sha1(password);
-//     const user = await dbClient.usersCollection('users').insertOne({ email: email, password: hashedPassword });
-//     const userId = user.insertedId;
-//     return res.status(201).json({ id: userId, email: email });
-//   }
-// }
