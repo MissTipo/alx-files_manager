@@ -1,5 +1,4 @@
-const { MongoClient } = require('mongodb');
-
+const { MongoClient, ObjectId } = require('mongodb')
 require('dotenv').config();
 const DB_HOST = process.env.DB_HOST || 'localhost';
 const DB_PORT = process.env.DB_PORT || 27017;
@@ -12,6 +11,7 @@ class DBClient {
     constructor() {
         this.client = new MongoClient(url, { useUnifiedTopology: true });
         this.connected = false;
+        this.DB = null;
         this.connect();
     }
 
@@ -50,8 +50,22 @@ class DBClient {
             throw error;
         }
     }
+    //getting user by email
+    async getuser(email){
+    const user = await this.client.db('files_manager').collection('users').findOne({email});
+    console.log(user);
+    return user;
+    }
+    //creeate user
+    async createUser (email, password) {
+      const user = await this.client.db('files_manager').collection('users').insertOne({ email: email, password: password }); 
+      return user.insertedId;
+    }
+    async getuserId(token){
+        const user = await  this.client.db('files_manager').collection('users').findOne({_id:ObjectId(token)});
+        return user;
+    }
 }
 
 const dbClient = new DBClient();
 module.exports = dbClient;
-

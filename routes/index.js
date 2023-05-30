@@ -10,8 +10,9 @@ router.get('/status', AppController.getStatus);
 router.get('/stats', AppController.getStats);
 router.post('/users', UsersController.postNew);
 //for task 3 fix this
-// router.get('/connect', AuthController.getConnect)
-// router.get('/disconnect', AuthController.getDisconnect)
-// router.get('/user/me', UsersController.getMe)
+router.get('/connect', AuthController.getConnect)
+router.get('/disconnect', AuthController.getdisconnect)
+router.get('/users/me', UsersController.getMe)
+// router.post('/files', FilesController.postUpload)
 
 module.exports = router;
