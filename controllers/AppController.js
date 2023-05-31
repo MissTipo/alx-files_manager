@@ -4,8 +4,8 @@ const dbClient = require('../utils/db');
 
 const AppController  = {
     async getStatus(req, res) {
-    const redisStatus = await redisClient.isAlive();
-    const dbStatus = await dbClient.isAlive();
+    const redisStatus = redisClient.isAlive();
+    const dbStatus = dbClient.isAlive();
 
     res.status(200).json({
       "redis": `${redisStatus}`,
@@ -24,4 +24,4 @@ const AppController  = {
   }
 }
 
-module.exports = AppController;
+export default AppController;

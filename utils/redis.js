@@ -1,20 +1,25 @@
-import { createClient } from 'redis';
+// import { createClient } from 'redis';
+const { createClient } = require('redis');
 
 class RedisClient {
     constructor() {
         this.client = createClient({
         host: 'localhost',
         port: 6379
-        })
-        this.connected = true;
-
+        });
         this.client.on('error', (error) => {
-            this.connected = false;
             console.log(error)
-        })
+        });
+        this.connected = true;
+        this.client.on('connect', () => {
+            this.connected = true;
+        });
+        this.client.on('end', () => {
+            this.connected = false;
+        });
     }
     isAlive() {
-    return this.connected 
+    return this.connected
     
     }
  async get(key) {
