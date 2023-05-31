@@ -1,25 +1,26 @@
 const { MongoClient, ObjectId } = require('mongodb')
 require('dotenv').config();
-const DB_HOST = process.env.DB_HOST || 'localhost';
-const DB_PORT = process.env.DB_PORT || 27017;
-const DB_DATABASE = process.env.DB_DATABASE || 'files_manager';
 
-const DB = `${DB_DATABASE}`;
-const url = `mongodb://${DB_HOST}:${DB_PORT}/${DB}`;
 
 class DBClient {
     constructor() {
+        const DB_HOST = process.env.DB_HOST || 'localhost';
+        const DB_PORT = process.env.DB_PORT || 27017;
+        const DB_DATABASE = process.env.DB_DATABASE || 'files_manager';
+        const DB = `${DB_DATABASE}`;
+        const url = `mongodb://${DB_HOST}:${DB_PORT}/${DB}`;
         this.client = new MongoClient(url, { useUnifiedTopology: true });
         this.connected = false;
-        this.DB = null;
         this.connect();
     }
 
     async connect() {
         try {
             await this.client.connect();
-            this.DB = this.client.db(DB);
+            // this.DB = this.client.db(DB);
             this.connected = true;
+            this.DB = this.client.db('files_manager');
+            // console.log('DBClient is connected');
         } catch (error) {
             throw error;
         }
