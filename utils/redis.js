@@ -56,5 +56,3 @@ class RedisClient {
 
 const redisClient = new RedisClient()
 module.exports = redisClient;
-
-// console.log(redisClient.isAlive());
