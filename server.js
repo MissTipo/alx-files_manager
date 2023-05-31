@@ -1,11 +1,12 @@
-const express = require('express');
-const routes = require('./routes');
+//Express server
+
+import express, { json } from 'express';
+import routes from './routes';
 
 
+const PORT = process.env.PORT || 5000;
 const app = express();
-const PORT = process.env.PORT || 5050;
 
-app.use(express.json());
 app.use('/', routes);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
