@@ -1,5 +1,4 @@
 // controllers/AppController.js
-// Redis and database clients
 const redisClient = require('../utils/redis');
 const dbClient = require('../utils/db');
 
