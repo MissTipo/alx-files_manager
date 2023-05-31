@@ -1,6 +1,4 @@
 const { MongoClient, ObjectId } = require('mongodb')
-require('dotenv').config();
-
 
 class DBClient {
     constructor() {
@@ -15,29 +13,17 @@ class DBClient {
     }
 
     async connect() {
-        try {
             await this.client.connect();
-            // this.DB = this.client.db(DB);
             this.connected = true;
             this.DB = this.client.db('files_manager');
-            // console.log('DBClient is connected');
-        } catch (error) {
-            throw error;
-        }
-    }
+        } 
 
     isAlive() {
         return this.connected;
     }
-
     async nbUsers() {
-        try {
             const count = await this.DB.collection('users').countDocuments({});
             return count;
-        } catch (error) {
-            console.error('Error retrieving number of users:', error);
-            throw error;
-        }
     }
 
     async nbFiles() {
@@ -96,24 +82,20 @@ class DBClient {
                     { $match: { userId: ObjectId(userId), parentId: ObjectId(parentId) } 
                 },
                 { $limit: 20 },
-                    
                 ])
                 .toArray();
                 return file;
         }
         return file;
     }
+
     // get file by parentId
     async FilesByParentId(parentId) {
         const file = await this.client.db('files_manager').collection('files').find({parentId: ObjectId(parentId)}).toArray();
         return file;
     }
-    //get all file by id
-    async getAllFiles(userId) {
-
-    }
-
 }
+
 
 const dbClient = new DBClient();
 module.exports = dbClient;
