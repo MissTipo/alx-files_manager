@@ -65,6 +65,55 @@ class DBClient {
         const user = await  this.client.db('files_manager').collection('users').findOne({_id:ObjectId(token)});
         return user;
     }
+    //function to add a file
+    async addFile(userId, name, type, isPublic, parentId, filePath) {
+        const file = await this.client.db('files_manager').collection('files').insertOne({ userId: userId, name: name, type: type, isPublic: isPublic, parentId: parentId, filePath: filePath });
+        return file.insertedId;
+    }
+    //function to get a file
+    async getFileById(fileId) {
+        const file = await this.client.db('files_manager').collection('files').findOne({_id: ObjectId(fileId)});
+        return file;
+    }
+    async FileByuserId(userId, page, parentId) {
+        if(parentId === 0){
+            if (page > 0) {
+                const file = await this.client
+                .db('files_manager')
+                .collection('files')
+                .aggregate([
+                    { $match: { userId: ObjectId(userId), parentId: ObjectId(parentId) } 
+                },
+                    { $limit: 20 },
+                ])
+                .toArray();
+                return file;
+                // .findOne({userId: ObjectId(userId)});
+            }
+                const file = await this.client
+                .db('files_manager')
+                .collection('files')
+                .aggregate([
+                    { $match: { userId: ObjectId(userId), parentId: ObjectId(parentId) } 
+                },
+                { $limit: 20 },
+                    
+                ])
+                .toArray();
+                return file;
+        }
+        return file;
+    }
+    // get file by parentId
+    async FilesByParentId(parentId) {
+        const file = await this.client.db('files_manager').collection('files').find({parentId: ObjectId(parentId)}).toArray();
+        return file;
+    }
+    //get all file by id
+    async getAllFiles(userId) {
+
+    }
+
 }
 
 const dbClient = new DBClient();
