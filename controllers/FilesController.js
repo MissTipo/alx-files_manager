@@ -85,7 +85,7 @@ const FilesController = {
         const key = `auth_${token}`
 
         //getting userid from redis reverse lookup using token
-        const userId = await redisClient.get(`auth_${token}`);
+        const userId = await redisClient.get(`auth_${key}`);
         console.log({userId});
         if(!userId){
             return res.status(401).json({error: 'Unauthorized'});
@@ -103,26 +103,70 @@ const FilesController = {
     async getIndex(req, res) {
         const token = req.headers['x-token'];
         const key = `auth_${token}`
+        const parentId = req.query.parentId || 0;
         const userId = await redisClient.get(key);
-            if(!userId){
-                return res.status(401).json({error: 'Unauthorized'});
+            if(userId){
+                if(!parentId){
+                    const file = await dbClient.getFileById(userId);
+                    res.status(200).json(file);
+                } else {
+                    const file = await dbClient.FilesByParentId(userId, parentId);
+                    res.status(200).json(file);
+                }
+                // const user = await dbClient.getuserId(userId);
+                // console.log({user})///user found
+                // if(user) {
+                //     const file = await dbClient.getFileById(userId);
+                //     console.log({file})
+                //     if(!file){
+                //         return res.status(404).json({error: 'Not found'}).end();
+                //     } 
+                // return res.status(200).json(file);
+                // }
             }
-            //getting userid from redis reverse lookup using token
-            const user = await dbClient.getuserId(userId);
-            console.log(user)
-            const parentId = req.query.parentId || 0;
-            // console.log(pr)
-            const files = await dbClient.FilesByParentId(parentId);
-            return res.status(200).json(files);
+            //getting userId from redis reverse lookup using token
+            // const user = await dbClient.getuserId(userId);
+            // console.log({user})
+            // console.log({parentId})
+            // const files = await dbClient.FilesByParentId(parentId);
+            // return res.status(200).json(files);
+        },
+        async getFile(req, res) {
+            const token = req.headers['x-token'];
+            const {id} = req.params;
+            const key = `auth_${token}`
+            const userId = await redisClient.get(key);
+            const file = await dbClient.getFileById(id);
+
+            if(file) {
+                if(userId && file.userId.toString() !== userId){
+                    return res.status(404).json({error: 'Unauthorized'}).end();
+                }
+            }
+            if(file.isPublic === false){
+                return res.status(400).json({error: 'Empty file'}).end();
+            }
+        if(!fs.existsSync(file.filePath)){
+            res.status(404).json({error: 'Not found'}).end();
+
         }
 
-        // console.log({parentId})
-        // const parentId = await dbtClient.getFileById(parentId);
-        // if(!parentId){
-        //     return res.status(404).json({error: 'Not found'});
-        // }
-
-
-    }
+        // const fileData = fs.readFileSync(file.filePath).toString('base64');
+        const fileTypes = mime.lookup(file.name);
+        res.setHeader('Content-Type', fileTypes);
+        res.send(fileData);
+        // read file from disk and send to client
+        try {
+            const fileData = fs.readFileSync(file.filePath).toString('base64');
+            const fileTypes = mime.lookup(file.name);
+            res.setHeader('Content-Type', fileTypes);
+            res.send(fileData);
+        }
+        // res.status(404).json({error: 'Not found'}).end();
+        catch (err) {
+            res.status(404).json({error: 'Not found'}).end();
+        }
+    },
+};
 
 module.exports = FilesController;
