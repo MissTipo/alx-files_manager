@@ -167,6 +167,27 @@ const FilesController = {
             res.status(404).json({error: 'Not found'}).end();
         }
     },
+    async putPublish(req, res) {
+        const token = req.headers['x-token'];
+        const { id } = req.params;
+        const key = `auth_${token}`
+        const userId = await redisClient.get(key);
+        if(userId) {
+            const user = await dbClient.getuserId(userId);
+            if(user) {
+                const file = await dbClient.getFileById(id);
+                if(!file) {
+                    res.status(404).json({error: 'Not found'}).end();
+                } else if(file.userId.toString() !== userId) {
+                    res.status(403).json({error: 'Not Found'}).end();
+                } else {
+                    await dbClient.putPublishFile(id)
+                    // const fileData = await dbClient.updateFileById(id, {isPublic: true});
+                    // res.status(200).json(fileData);
+                }
+            }
+        }
+    },
 };
 
 module.exports = FilesController;
