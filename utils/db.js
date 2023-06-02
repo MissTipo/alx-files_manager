@@ -46,6 +46,12 @@ class DBClient {
       const user = await this.client.db('files_manager').collection('users').insertOne({ email: email, password: password }); 
       return user.insertedId;
     }
+    //getting user by id
+    async getUserById(userId){
+        const user = await this.client.db('files_manager').collection('users').findOne({_id:ObjectId(userId)});
+        return user;
+    }
+    //getting user by token
     async getuserId(token){
         const user = await  this.client.db('files_manager').collection('users').findOne({_id:ObjectId(token)});
         return user;
@@ -56,8 +62,11 @@ class DBClient {
         return file.insertedId;
     }
     //function to get a file
-    async getFileById(fileId) {
-        const file = await this.client.db('files_manager').collection('files').findOne({_id: ObjectId(fileId)});
+    async getFileById(userId) {
+        const file = await this.client
+        .db('files_manager')
+        .collection('files')
+        .find({userId: ObjectId(userId)}).toArray();
         return file;
     }
     async FileByuserId(userId, page, parentId) {
@@ -89,9 +98,8 @@ class DBClient {
         return file;
     }
 
-    // get file by parentId
-    async FilesByParentId(parentId) {
-        const file = await this.client.db('files_manager').collection('files').find({parentId: ObjectId(parentId)}).toArray();
+    async FilesByParentId(userId, parentId) {
+        const file = await this.client.db('files_manager').collection('files').find({ userId: ObjectId(userId), parentId: ObjectId(parentId)}).toArray();
         return file;
     }
 }
