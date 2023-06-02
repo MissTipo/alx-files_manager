@@ -18,16 +18,13 @@ const UsersController = {
       const user = await dbClient.getuser(email);
       // const existingUser = await usersCollection.findOne({ email: email });
       if (user) {
-        // const user = redisClient.set(key)s
-        // console.log(user)
+        
         return res.status(400).json({ error: 'Already exists' });
       }
-
       // Creating a new user and hashing the password
       const hashedPassword = crypto.createHash('sha1').update(password).digest('hex');
       // const newUser = { email, hashedPassword };
       const userId = await dbClient.createUser(email, hashedPassword);
-
 
       // Return hashed user ID created and email
       return res.status(201).json({ id: userId, email });
